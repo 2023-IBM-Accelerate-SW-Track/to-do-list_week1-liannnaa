@@ -1,11 +1,15 @@
 import React, { Component } from "react";
+import AddTodo from "../component/AddTodo.js";
+import Todos from "../component/todos.js";
+import "./Home.css";
 
 class Home extends Component {
   // A default state of this component with an empty list of todos.
   constructor() {
     super();
+    const todos = sessionStorage.getItem('todos');
     this.state = {
-      // create your empty list here call it todos.
+      todos: todos ? JSON.parse(todos) : [],
     };
   }
   // the addTodo function simply creates a new array that includes the user submitted todo item and then
@@ -22,13 +26,28 @@ class Home extends Component {
     // Updates the local state with the new array.
     this.setState({
       todos: new_list,
+    }, () => {
+      sessionStorage.setItem('todos', JSON.stringify(this.state.todos));
     });
   };
+
+  removeTodo = (id) => {
+    const todos = this.state.todos.filter(todo => {
+      return todo.id !== id
+    });
+    this.setState({
+      todos: todos
+    }, () => {
+      sessionStorage.setItem('todos', JSON.stringify(this.state.todos));
+    });
+  }
+
   render() {
     return (
       <div className="Home">
-        <p> Replace this</p>
         <h1>Todo's </h1>
+        <AddTodo addTodo={this.addTodo} />
+        <Todos todos={this.state.todos} removeTodo={this.removeTodo} />
       </div>
     );
   }
